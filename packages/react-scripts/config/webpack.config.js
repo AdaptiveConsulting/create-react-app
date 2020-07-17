@@ -53,6 +53,8 @@ const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
 
 const isExtendingEslintConfig = process.env.EXTEND_ESLINT === 'true';
 
+const shouldUseMockServices = process.env.USE_MOCK_SERVICES == 'true';
+
 const imageInlineSizeLimit = parseInt(
   process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
 );
@@ -738,6 +740,17 @@ module.exports = function (webpackEnv) {
           // The formatter is invoked directly in WebpackDevServerUtils during development
           formatter: isEnvProduction ? typescriptFormatter : undefined,
         }),
+      new webpack.NormalModuleReplacementPlugin(/\.service$/, function (
+        resource
+      ) {
+        // Services files must be named '.service[ts|js]'
+        // Mock service files must be named '.mock[ts|js]'
+        //'isEnvProduction' safeguard as protection against accidental deployment of mocks.
+        resource.request = resource.request.replace(
+          /service$/,
+          shouldUseMockServices && !isEnvProduction ? 'mock' : 'service'
+        );
+      }),
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell webpack to provide empty mocks for them so importing them works.
