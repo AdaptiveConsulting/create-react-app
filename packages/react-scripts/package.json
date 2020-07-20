@@ -9,7 +9,7 @@
   },
   "publishConfig": {
     "access": "restricted",
-    "registry": "https://weareadaptive.jfrog.io/weareadaptive/api/npm/hydra-web/"
+    "registry": "https://weareadaptive.jfrog.io/artifactory/api/npm/hydra-web/"
   },
   "license": "MIT",
   "engines": {
